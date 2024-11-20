@@ -1,0 +1,22 @@
+{
+  "name": "markdown-toc",
+  "version": "1.0.0",
+  "description": "Generates table of content",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmtusher97/markdown-toc.git"
+  },
+  "keywords": [
+    "toc"
+  ],
+  "author": "kmtusher97",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kmtusher97/markdown-toc/issues"
+  },
+  "homepage": "https://github.com/kmtusher97/markdown-toc#readme"
+}
