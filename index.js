@@ -1,12 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
-function getDefaultFileTitle(fileName) {
+function getDefaultFileTitle(filePath) {
+  const fileSegments = filePath.split("/");
+  const fileName = fileSegments[fileSegments.length - 1];
   const ext = path.extname(fileName);
   return fileName.split(ext)[0];
 }
 
-function getMarkdownTitle({ filePath, fileName }) {
+function getMarkdownTitle(filePath) {
   const content = fs.readFileSync(filePath, "utf8");
 
   const titleMatch = content.match(/^#\s+(.*)/m);
@@ -14,19 +16,19 @@ function getMarkdownTitle({ filePath, fileName }) {
   if (titleMatch) {
     return titleMatch[1].trim();
   }
-  return getDefaultFileTitle(fileName);
+  return getDefaultFileTitle(filePath);
 }
 
-function getFileTitle({ filePath, fileName }) {
+function getFileTitle(filePath) {
   if ([".MD", ".md"].includes(path.extname(filePath))) {
-    return getMarkdownTitle({ filePath, fileName });
+    return getMarkdownTitle(filePath);
   }
-  return getDefaultFileTitle(fileName);
+  return getDefaultFileTitle(filePath);
 }
 
-function getFileNames({ dirPath = process.cwd(), extensions = [] }) {
+
+function getTableOfContents({ dirPath = process.cwd(), extensions = [] }) {
   try {
-    // Validate extensions
     if (
       !Array.isArray(extensions) ||
       extensions.some((ext) => typeof ext !== "string")
@@ -34,9 +36,9 @@ function getFileNames({ dirPath = process.cwd(), extensions = [] }) {
       throw new Error("Extensions must be an array of strings.");
     }
 
-    let fileList = [];
+    let toc = "";
 
-    function readDirectory({ directory, currentDir = "." }) {
+    function readDirectory({ directory, currentDir = ".", level = 0 }) {
       const files = fs.readdirSync(directory);
 
       for (const file of files) {
@@ -44,27 +46,32 @@ function getFileNames({ dirPath = process.cwd(), extensions = [] }) {
         const stat = fs.statSync(fullPath);
 
         if (stat.isDirectory()) {
+          toc += `${" ".repeat(level * 2)}* **${file}**\n`;
           readDirectory({
             directory: fullPath,
             currentDir: currentDir + "/" + file,
+            level: level + 1,
           });
         } else if (
           extensions.length === 0 ||
           extensions.includes(path.extname(file))
         ) {
-          fileList.push(currentDir + "/" + file);
+          const filePath = currentDir + "/" + file;
+          toc += `${" ".repeat(level * 2)}* [${getFileTitle(
+            fullPath
+          )}](${filePath})\n`;
         }
       }
     }
 
     readDirectory({ directory: dirPath });
-    return fileList;
+    return toc;
   } catch (error) {
     throw error;
   }
 }
 
 module.exports = {
-  getFileNames,
   getFileTitle,
+  getTableOfContents,
 };

@@ -1,25 +1,25 @@
-const { getFileNames } = require("..");
+const { getTableOfContents } = require("..");
 
 describe("getFilesByExtension", () => {
   test("should return files with specified extensions", () => {
     const dirPath = __dirname + "/mocks";
     const extensions = [".md"];
 
-    const result = getFileNames({ dirPath, extensions });
-    expect(result).toEqual(["./TestFile3.md", "./test-files/TestFile1.md"]);
+    const result = getTableOfContents({ dirPath, extensions });
+    expect(result).toEqual(
+      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n`
+    );
   });
 
   test("should return all files no extensions", () => {
     const dirPath = __dirname + "/mocks";
     const extensions = [];
 
-    const result = getFileNames({ dirPath, extensions });
+    const result = getTableOfContents({ dirPath, extensions });
 
-    expect(result).toEqual([
-      "./TestFile3.md",
-      "./test-files/TestFile1.md",
-      "./test-files/TextFile.txt",
-    ]);
+    expect(result).toEqual(
+      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n  * [TextFile](./test-files/TextFile.txt)\n`
+    );
   });
 
   test("should throw error for non-existent directory", () => {
@@ -27,7 +27,7 @@ describe("getFilesByExtension", () => {
     const extensions = [".txt"];
 
     expect(() =>
-      getFileNames({ dirPath: invalidPath, extensions })
+      getTableOfContents({ dirPath: invalidPath, extensions })
     ).toThrowError(/no such file or directory/);
   });
 
@@ -36,7 +36,7 @@ describe("getFilesByExtension", () => {
     const extensions = [5];
 
     expect(() =>
-      getFileNames({ dirPath: invalidPath, extensions })
+      getTableOfContents({ dirPath: invalidPath, extensions })
     ).toThrowError(/Extensions must be an array of strings/);
   });
 
@@ -44,7 +44,7 @@ describe("getFilesByExtension", () => {
     const dirPath = __dirname + "/mocks";
     const extensions = [".md", ".txt"];
 
-    const result = getFileNames({ dirPath, extensions });
+    const result = getTableOfContents({ dirPath, extensions });
     expect(result).toContain("./test-files/TextFile.txt");
     expect(result).toContain("./TestFile3.md");
   });
