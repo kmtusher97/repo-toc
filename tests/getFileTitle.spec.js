@@ -1,4 +1,4 @@
-const { getFileTitle } = require("..");
+const { getFileTitle } = require("../lib");
 
 describe("getFileTitle", () => {
   test("should return markdown file title", () => {
