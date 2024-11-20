@@ -1,6 +1,6 @@
 {
   "name": "repo-toc",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "https://github.com/kmtusher97/repo-toc",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "url": "git+https://github.com/kmtusher97/repo-toc.git"
   },
   "keywords": [
-    "toc"
+    "toc",
+    "markdown-toc",
+    "table of contents"
   ],
   "author": "kmtusher97",
   "license": "ISC",
