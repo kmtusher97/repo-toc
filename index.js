@@ -26,7 +26,6 @@ function getFileTitle(filePath) {
   return getDefaultFileTitle(filePath);
 }
 
-
 function getTableOfContents({ dirPath = process.cwd(), extensions = [] }) {
   try {
     if (
@@ -71,7 +70,47 @@ function getTableOfContents({ dirPath = process.cwd(), extensions = [] }) {
   }
 }
 
+function updateTOC({ filePath = __dirname + "/README.md", contentToAdd }) {
+  try {
+    let fileContent = fs.existsSync(filePath)
+      ? fs.readFileSync(filePath, "utf8")
+      : "";
+
+    const tocStart = "<!---TOC-START--->";
+    const tocEnd = "<!---TOC-END--->";
+
+    const tocStartIndex = fileContent.indexOf(tocStart);
+    const tocEndIndex = fileContent.indexOf(tocEnd);
+
+    if (tocStartIndex !== -1 && tocEndIndex !== -1) {
+      fileContent =
+        fileContent.substring(0, tocStartIndex + tocStart.length) +
+        `\n${contentToAdd}\n` +
+        fileContent.substring(tocEndIndex);
+    } else {
+      const tocSection = `${tocStart}\n${contentToAdd}\n${tocEnd}`;
+      fileContent = `${fileContent}\n\n${tocSection}`.trim();
+    }
+
+    fs.writeFileSync(filePath, fileContent, "utf8");
+  } catch (err) {
+    console.error("Error updating the TOC:", err.message);
+  }
+}
+
+function generateTableOfContent({
+  dirPath = process.cwd(),
+  extensions = [".md"],
+  filePath = __dirname + "/README.md",
+}) {
+  updateTOC({
+    filePath,
+    contentToAdd: getTableOfContents({ dirPath, extensions }),
+  });
+}
+
 module.exports = {
   getFileTitle,
   getTableOfContents,
+  generateTableOfContent,
 };
