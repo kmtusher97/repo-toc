@@ -7,6 +7,9 @@
     "test": "jest",
     "test:watch": "jest --watch"
   },
+  "bin": {
+    "repo-toc": "./cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kmtusher97/repo-toc.git"
@@ -22,5 +25,8 @@
   "homepage": "https://github.com/kmtusher97/repo-toc#readme",
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
   }
 }
