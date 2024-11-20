@@ -1,7 +1,7 @@
 {
-  "name": "markdown-toc",
+  "name": "repo-toc",
   "version": "1.0.0",
-  "description": "Generates table of content",
+  "description": "https://github.com/kmtusher97/repo-toc",
   "main": "index.js",
   "scripts": {
     "test": "jest",
