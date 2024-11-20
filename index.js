@@ -1,12 +1,29 @@
 const fs = require("fs");
 const path = require("path");
 
-/**
- * Get all file names in a directory with specific extensions.
- * @param {string} [dirPath=process.cwd()] - Directory path (default: current working directory).
- * @param {string[]} extensions - List of file extensions to filter (e.g., ['.md', '.txt']).
- * @returns {string[]} - List of file names with the specified extensions.
- */
+function getDefaultFileTitle(fileName) {
+  const ext = path.extname(fileName);
+  return fileName.split(ext)[0];
+}
+
+function getMarkdownTitle({ filePath, fileName }) {
+  const content = fs.readFileSync(filePath, "utf8");
+
+  const titleMatch = content.match(/^#\s+(.*)/m);
+
+  if (titleMatch) {
+    return titleMatch[1].trim();
+  }
+  return getDefaultFileTitle(fileName);
+}
+
+function getFileTitle({ filePath, fileName }) {
+  if ([".MD", ".md"].includes(path.extname(filePath))) {
+    return getMarkdownTitle({ filePath, fileName });
+  }
+  return getDefaultFileTitle(fileName);
+}
+
 function getFileNames({ dirPath = process.cwd(), extensions = [] }) {
   try {
     // Validate extensions
@@ -43,11 +60,11 @@ function getFileNames({ dirPath = process.cwd(), extensions = [] }) {
     readDirectory({ directory: dirPath });
     return fileList;
   } catch (error) {
-    console.error("Error reading directory:", error.message);
     throw error;
   }
 }
 
 module.exports = {
   getFileNames,
+  getFileTitle,
 };
