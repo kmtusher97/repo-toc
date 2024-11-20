@@ -4,7 +4,6 @@ const { generateTableOfContent } = require("repo-toc");
 describe("test repo-toc package", () => {
   test("should generate TOC on marker less markdown file", () => {
     const dirPath = __dirname + "/mocks";
-
     const filePath = __dirname + "/" + "temp.md";
 
     fs.writeFileSync(filePath, "## Table of contents");
