@@ -8,7 +8,7 @@ Easily generate a markdown Table of Contents (TOC) for your GitHub repository.
 Install the package using npm:
 
 ```bash
-npm install repo-toc
+npm install -g repo-toc
 ```
 
 ## Usage
@@ -42,6 +42,24 @@ The generated Table of Contents:
     <!---TOC-END--->
 ```
 
+### CLI
+```bash
+repo-toc [options]
+
+Options:
+      --version  Show version number                                   [boolean]
+  -d, --dir      Directory path to generate TOC for
+                [string] [default: process.cwd()]
+  -e, --ext      File extensions to include (comma-separated)
+                                                       [string] [default: ".md"]
+  -o, --output   File path to save the TOC     [string] [default: "./README.md"]
+  -h, --help     Show help                                             [boolean]
+```
+
+```
+repo-toc
+```
+
 ### Code Example
 
 To generate the TOC:
@@ -54,7 +72,7 @@ fs.writeFileSync(filePath, "## Table of contents");
 generateTableOfContent({ dirPath, filePath });
 
 // Call the function to generate the TOC
-const toc = generateTableOfContent();
+generateTableOfContent();
 // It will update the README.md file with the Table of Contents
 ```
 
