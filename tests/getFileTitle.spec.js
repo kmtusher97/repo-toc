@@ -5,7 +5,7 @@ describe("getFileTitle", () => {
     const fileName = "TestFile1.md";
     const filePath = __dirname + `/mocks/test-files/${fileName}`;
 
-    const title = getFileTitle({ filePath, fileName });
+    const title = getFileTitle(filePath);
     expect(title).toEqual("Test File 1 Title");
   });
 
@@ -13,7 +13,7 @@ describe("getFileTitle", () => {
     const fileName = "TestFile3.md";
     const filePath = __dirname + `/mocks//${fileName}`;
 
-    const title = getFileTitle({ filePath, fileName });
+    const title = getFileTitle(filePath);
     expect(title).toEqual("TestFile3");
   });
 
@@ -21,7 +21,7 @@ describe("getFileTitle", () => {
     const fileName = "TextFile.txt";
     const filePath = __dirname + `/mocks/test-files/${fileName}`;
 
-    const title = getFileTitle({ filePath, fileName });
+    const title = getFileTitle(filePath);
     expect(title).toEqual("TextFile");
   });
 });
