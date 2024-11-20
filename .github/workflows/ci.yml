@@ -24,5 +24,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Link repo-toc package
+        run: |
+          npm link
+          cd tests
+          npm link repo-toc
+          cd ..
+
       - name: Run tests
         run: npm test
