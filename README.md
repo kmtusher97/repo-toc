@@ -60,6 +60,46 @@ Options:
 repo-toc
 ```
 
+### Use with Github actions
+It will auto generate the TOC after you commit things on Github. You use this github action
+```yml
+name: Generate TOC
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  toc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install markdown-toc
+      run: npm install -g repo-toc
+
+    - name: Generate TOC
+      run: repo-toc -i README.md
+
+    - name: Commit and Push Changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add README.md
+        git commit -m "Update TOC"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### Code Example
 
 To generate the TOC:
