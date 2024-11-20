@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { generateTableOfContent } = require("..");
+const { generateTableOfContent } = require("../lib");
 
 describe("generateTableOfContents", () => {
   test("should generate TOC on marker less markdown file", () => {

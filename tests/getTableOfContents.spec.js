@@ -1,4 +1,4 @@
-const { getTableOfContents } = require("..");
+const { getTableOfContents } = require("../lib");
 
 describe("getFilesByExtension", () => {
   test("should return files with specified extensions", () => {
