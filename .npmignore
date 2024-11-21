@@ -1,0 +1,11 @@
+tests/
+coverage/
+jest.config.js
+
+.git/
+.github/
+.gitignore
+
+node_modules/
+
+.vscode/

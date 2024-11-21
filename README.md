@@ -30,7 +30,6 @@ Your directory structure:
 ```
 
 #### Output:
-
 The generated Table of Contents:
 
 ```markdown
