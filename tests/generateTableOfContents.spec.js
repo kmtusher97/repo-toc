@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { generateTableOfContent, getTableOfContents } = require("../lib");
+const { cleanupTestArtifacts, assertTocContent } = require("./helpers/testUtils");
 
 describe("generateTableOfContents", () => {
   test("should generate TOC on marker less markdown file", () => {
@@ -8,14 +9,13 @@ describe("generateTableOfContents", () => {
     const fileName = "markdownWithoutMarker.md";
     const filePath = __dirname + "/" + fileName;
 
+    cleanupTestArtifacts(dirPath);
+
     fs.writeFileSync(filePath, "## Table of contents");
     generateTableOfContent({ dirPath, filePath });
 
     const fileContent = fs.readFileSync(filePath, "utf8");
-
-    expect(fileContent).toContain(
-      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n`
-    );
+    assertTocContent(fileContent);
 
     fs.unlink(filePath, (err) => {
       if (err) {
@@ -24,10 +24,12 @@ describe("generateTableOfContents", () => {
     });
   });
 
-  test("should generate TOC on marker less markdown file", () => {
+  test("should generate TOC on markdown file with markers", () => {
     const dirPath = __dirname + "/mocks";
     const fileName = "markdownWithMarker.md";
     const filePath = __dirname + "/" + fileName;
+
+    cleanupTestArtifacts(dirPath);
 
     fs.writeFileSync(
       filePath,
@@ -36,10 +38,7 @@ describe("generateTableOfContents", () => {
     generateTableOfContent({ dirPath, filePath });
 
     const fileContent = fs.readFileSync(filePath, "utf8");
-
-    expect(fileContent).toContain(
-      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n`
-    );
+    assertTocContent(fileContent);
 
     fs.unlink(filePath, (err) => {
       if (err) {

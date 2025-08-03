@@ -1,25 +1,25 @@
 const { getTableOfContents } = require("../lib");
+const { cleanupTestArtifacts, assertTocContent } = require("./helpers/testUtils");
 
 describe("getFilesByExtension", () => {
   test("should return files with specified extensions", () => {
     const dirPath = __dirname + "/mocks";
     const extensions = [".md"];
 
+    cleanupTestArtifacts(dirPath);
+
     const result = getTableOfContents({ dirPath, extensions });
-    expect(result).toEqual(
-      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n`
-    );
+    assertTocContent(result);
   });
 
   test("should return all files no extensions", () => {
     const dirPath = __dirname + "/mocks";
     const extensions = [];
 
-    const result = getTableOfContents({ dirPath, extensions });
+    cleanupTestArtifacts(dirPath);
 
-    expect(result).toEqual(
-      `* [TestFile3](./TestFile3.md)\n* **test-files**\n  * [Test File 1 Title](./test-files/TestFile1.md)\n  * [TextFile](./test-files/TextFile.txt)\n`
-    );
+    const result = getTableOfContents({ dirPath, extensions });
+    assertTocContent(result, { shouldContainTextFile: true });
   });
 
   test("should throw error for non-existent directory", () => {

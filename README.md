@@ -54,6 +54,8 @@ Options:
   -o, --output   File path to save the TOC     [string] [default: "./README.md"]
   -x, --exclude  Directories to exclude (comma-separated)              [string]
   -h, --help     Show help                                             [boolean]
+
+Note: Files and directories in .gitignore are automatically excluded.
 ```
 
 ```
@@ -71,6 +73,8 @@ Generate TOC for only JavaScript files, excluding test directories:
 ```bash
 repo-toc --ext .js,.ts --exclude tests,__tests__,spec
 ```
+
+**Note**: The tool automatically respects `.gitignore` files and excludes any files or directories listed there, in addition to your manual exclusions.
 
 ### Use with Github actions
 It will auto generate the TOC after you commit things on Github. You use this github action
@@ -124,6 +128,7 @@ fs.writeFileSync(filePath, "## Table of contents");
 generateTableOfContent({ dirPath, filePath });
 
 // Generate TOC excluding specific directories
+// Note: .gitignore files are automatically respected
 generateTableOfContent({
   dirPath: __dirname,
   filePath: "./README.md",
@@ -150,7 +155,7 @@ Generates a Table of Contents for the specified directory.
   - **`filePath`** (string): The path where the generated TOC will be written.  
     - Default: `__dirname + "/README.md"`.
   - **`excludedDirs`** (array of strings): An array of directory names to exclude from the TOC.  
-    - Default: `[]`. Note: Directories starting with `.` are automatically excluded.
+    - Default: `[]`. Note: Directories starting with `.` and files/directories in `.gitignore` are automatically excluded.
 
 **Returns**:  
 `void`
