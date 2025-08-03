@@ -159,6 +159,15 @@ Generates a Table of Contents for the specified directory.
 
 We welcome contributions! If you'd like to report issues, request features, or submit pull requests, please visit our [GitHub repository](https://github.com/kmtusher97/repo-toc).
 
+### Automated Publishing
+
+This package uses automated publishing to NPM:
+- **Automatic**: New versions are published automatically when changes are merged to the main branch
+- **Version Bumping**: Semantic versioning based on conventional commit messages
+- **Release Notes**: GitHub releases are created automatically with each publish
+
+For setup details, see [Release Setup Guide](.github/RELEASE_SETUP.md).
+
 ## License
 
 This package is licensed under the [ISC License](https://opensource.org/licenses/ISC).
