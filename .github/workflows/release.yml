@@ -1,0 +1,109 @@
+name: Release and Publish to NPM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    # Only run if this is not a version bump commit (to avoid infinite loops)
+    if: "!contains(github.event.head_commit.message, 'chore: bump version')"
+    
+    permissions:
+      contents: write
+      id-token: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version bump type
+        id: version-type
+        run: |
+          # Check commit messages since last tag to determine version bump
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s" 2>/dev/null || git log --pretty=format:"%s")
+
+          echo "Commits since last tag:"
+          echo "$COMMITS"
+
+          if echo "$COMMITS" | grep -qE "^(feat|feature)(\(.+\))?:" || echo "$COMMITS" | grep -q "BREAKING CHANGE"; then
+            echo "version_type=minor" >> $GITHUB_OUTPUT
+            echo "Detected minor version bump (new features)"
+          elif echo "$COMMITS" | grep -qE "^(fix|bug)(\(.+\))?:" || echo "$COMMITS" | grep -qE "^(perf|refactor|style|docs|test|chore)(\(.+\))?:"; then
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+            echo "Detected patch version bump (fixes/improvements)"
+          else
+            echo "version_type=patch" >> $GITHUB_OUTPUT
+            echo "Defaulting to patch version bump"
+          fi
+
+      - name: Bump version
+        id: version
+        run: |
+          # Bump version based on the determined type
+          VERSION_TYPE="${{ steps.version-type.outputs.version_type }}"
+          NEW_VERSION=$(npm version $VERSION_TYPE --no-git-tag-version)
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Update package-lock.json
+        run: npm install --package-lock-only
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.new_version }}"
+          git tag ${{ steps.version.outputs.new_version }}
+
+      - name: Push changes
+        run: |
+          git push origin main
+          git push origin ${{ steps.version.outputs.new_version }}
+
+      - name: Publish to NPM
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.new_version }}
+          release_name: Release ${{ steps.version.outputs.new_version }}
+          body: |
+            ## Changes in ${{ steps.version.outputs.new_version }}
+            
+            Auto-generated release from commits pushed to main branch.
+            
+            ### Recent Commits
+            ${{ github.event.head_commit.message }}
+            
+            📦 Package published with provenance for enhanced supply chain security.
+          draft: false
+          prerelease: false
