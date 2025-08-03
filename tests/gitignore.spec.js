@@ -10,23 +10,24 @@ const { getTableOfContents } = require("../lib");
 describe("Gitignore functionality", () => {
   const testDir = path.join(__dirname, "mocks", "gitignore-test");
 
-  beforeAll(() => {
-    // Create test directory structure
-    if (!fs.existsSync(testDir)) {
-      fs.mkdirSync(testDir, { recursive: true });
+  function setupTestDirectory() {
+    // Clean up any existing test directory first
+    if (fs.existsSync(testDir)) {
+      fs.rmSync(testDir, { recursive: true, force: true });
     }
 
-    // Create test .gitignore file
-    const gitignoreContent = `
-# Comments should be ignored
+    // Create test directory structure
+    fs.mkdirSync(testDir, { recursive: true });
+
+    // Create test .gitignore file (without leading newline)
+    const gitignoreContent = `# Comments should be ignored
 node_modules/
 *.log
 build
 dist/
 temp*.md
 .env
-*.test.js
-`;
+*.test.js`;
     fs.writeFileSync(path.join(testDir, ".gitignore"), gitignoreContent);
 
     // Create test files and directories
@@ -41,10 +42,15 @@ temp*.md
     fs.writeFileSync(path.join(testDir, ".env"), "SECRET=value");
     fs.writeFileSync(path.join(testDir, "app.test.js"), "test content");
     fs.writeFileSync(path.join(testDir, "app.js"), "app content");
+  }
+
+  beforeEach(() => {
+    // Set up test directory before each test to ensure isolation
+    setupTestDirectory();
   });
 
-  afterAll(() => {
-    // Clean up test directory
+  afterEach(() => {
+    // Clean up test directory after each test
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, { recursive: true, force: true });
     }
