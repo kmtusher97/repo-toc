@@ -27,6 +27,13 @@ yargs
     demandOption: false,
     default: "./README.md",
   })
+  .option("exclude", {
+    alias: "x",
+    describe: "Directories to exclude (comma-separated)",
+    type: "string",
+    demandOption: false,
+    default: "",
+  })
   .help()
   .alias("help", "h").argv;
 
@@ -34,5 +41,6 @@ const options = yargs.argv;
 const dirPath = options.dir;
 const extensions = options.ext.split(",");
 const filePath = options.output;
+const excludedDirs = options.exclude.split(",").filter(dir => dir.trim() !== "");
 
-generateTableOfContent({ dirPath, extensions, filePath });
+generateTableOfContent({ dirPath, extensions, filePath, excludedDirs });

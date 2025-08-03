@@ -52,11 +52,24 @@ Options:
   -e, --ext      File extensions to include (comma-separated)
                                                        [string] [default: ".md"]
   -o, --output   File path to save the TOC     [string] [default: "./README.md"]
+  -x, --exclude  Directories to exclude (comma-separated)              [string]
   -h, --help     Show help                                             [boolean]
 ```
 
 ```
 repo-toc
+```
+
+### Usage Examples
+
+Generate TOC excluding specific directories:
+```bash
+repo-toc --exclude node_modules,dist,build
+```
+
+Generate TOC for only JavaScript files, excluding test directories:
+```bash
+repo-toc --ext .js,.ts --exclude tests,__tests__,spec
 ```
 
 ### Use with Github actions
@@ -110,6 +123,13 @@ const filePath = __dirname + "/" + "README.md";
 fs.writeFileSync(filePath, "## Table of contents");
 generateTableOfContent({ dirPath, filePath });
 
+// Generate TOC excluding specific directories
+generateTableOfContent({
+  dirPath: __dirname,
+  filePath: "./README.md",
+  excludedDirs: ["node_modules", "dist", "build"]
+});
+
 // Call the function to generate the TOC
 generateTableOfContent();
 // It will update the README.md file with the Table of Contents
@@ -129,6 +149,8 @@ Generates a Table of Contents for the specified directory.
     - Default: `[".md"]`.  
   - **`filePath`** (string): The path where the generated TOC will be written.  
     - Default: `__dirname + "/README.md"`.
+  - **`excludedDirs`** (array of strings): An array of directory names to exclude from the TOC.  
+    - Default: `[]`. Note: Directories starting with `.` are automatically excluded.
 
 **Returns**:  
 `void`
