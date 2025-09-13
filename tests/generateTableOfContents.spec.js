@@ -5,9 +5,9 @@ const { cleanupTestArtifacts, assertTocContent } = require("./helpers/testUtils"
 
 describe("generateTableOfContents", () => {
   test("should generate TOC on marker less markdown file", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "mocks");
     const fileName = "markdownWithoutMarker.md";
-    const filePath = __dirname + "/" + fileName;
+    const filePath = path.join(dirPath, fileName);
 
     cleanupTestArtifacts(dirPath);
 
@@ -15,6 +15,7 @@ describe("generateTableOfContents", () => {
     generateTableOfContent({ dirPath, filePath });
 
     const fileContent = fs.readFileSync(filePath, "utf8");
+    console.log(fileContent);
     assertTocContent(fileContent);
 
     fs.unlink(filePath, (err) => {
@@ -25,9 +26,9 @@ describe("generateTableOfContents", () => {
   });
 
   test("should generate TOC on markdown file with markers", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "mocks");
     const fileName = "markdownWithMarker.md";
-    const filePath = __dirname + "/" + fileName;
+    const filePath = path.join(dirPath, fileName);
 
     cleanupTestArtifacts(dirPath);
 
@@ -48,7 +49,7 @@ describe("generateTableOfContents", () => {
   });
 
   test("should exclude specified directories from TOC", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "mocks");
     
     // Create a temporary directory to exclude
     const tempDir = path.join(dirPath, "temp-exclude");
@@ -95,7 +96,7 @@ describe("generateTableOfContents", () => {
   });
 
   test("should exclude multiple directories from TOC", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "mocks");
     
     // Test excluding the existing test-files directory
     const tocWithExclusions = getTableOfContents({ 
