@@ -90,6 +90,122 @@ repo-toc --ext .js,.ts --exclude tests,__tests__,spec
 
 **Note**: The tool automatically respects `.gitignore` files and excludes any files or directories listed there, in addition to your manual exclusions. This ensures your TOC only includes files that are actually tracked in your repository.
 
+### Use with Pre-commit Hooks
+
+You can integrate `repo-toc` with pre-commit hooks to automatically generate and update the TOC before each commit. This ensures your TOC is always up-to-date.
+
+#### Setup
+
+1. **Install pre-commit** (if not already installed):
+```bash
+pip install pre-commit
+```
+
+2. **Add repo-toc to your package.json**:
+```json
+{
+  "devDependencies": {
+    "repo-toc": "^1.2.0"
+  },
+  "scripts": {
+    "generate-toc": "./.github/hooks/generate-toc.sh",
+    "install-hooks": "pre-commit install"
+  }
+}
+```
+
+3. **Create a pre-commit hook script** (`.github/hooks/generate-toc.sh`):
+```bash
+#!/bin/bash
+set -e
+
+echo "🔄 Generating Table of Contents..."
+
+# Check if Node.js and npm are available
+if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+    echo "❌ Node.js/npm is not installed. Please install Node.js to generate TOC."
+    exit 1
+fi
+
+# Install repo-toc if not already installed
+if ! npm list -g repo-toc &> /dev/null; then
+    echo "📦 Installing repo-toc globally..."
+    npm install -g repo-toc
+fi
+
+# Generate TOC for README.md
+if [ -f "README.md" ]; then
+    echo "📝 Updating Table of Contents in README.md..."
+    
+    # Create a backup
+    cp README.md README.md.backup
+    
+    # Generate TOC with repo-toc
+    repo-toc -i README.md
+    
+    # Check if the file was modified
+    if ! cmp -s README.md README.md.backup; then
+        echo "✅ Table of Contents updated successfully!"
+        # Add the updated file to git staging area
+        git add README.md
+    else
+        echo "ℹ️  Table of Contents is already up to date."
+    fi
+    
+    # Clean up backup
+    rm README.md.backup
+else
+    echo "❌ README.md not found in current directory"
+    exit 1
+fi
+
+echo "🎉 TOC generation completed!"
+```
+
+4. **Configure pre-commit** (`.pre-commit-config.yaml`):
+```yaml
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-markdown
+        args: [--fix]
+
+  - repo: local
+    hooks:
+      - id: generate-toc
+        name: Generate Table of Contents
+        entry: ./.github/hooks/generate-toc.sh
+        language: script
+        files: '^README\.md$'
+        pass_filenames: false
+        stages: [commit]
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.37.0
+    hooks:
+      - id: markdownlint
+        args: [--fix]
+        files: \.md$
+```
+
+5. **Install the pre-commit hooks**:
+```bash
+npm run install-hooks
+# or
+pre-commit install
+```
+
+#### Benefits
+
+- **Automatic TOC updates**: TOC is generated/updated automatically before each commit
+- **Consistent formatting**: Ensures TOC follows the same format across all commits
+- **No manual intervention**: Developers don't need to remember to update the TOC
+- **Integration with other hooks**: Works seamlessly with markdown linting and other pre-commit hooks
+
 ### Use with Github actions
 It will auto generate the TOC after you commit things on Github. You use this github action
 ```yml
