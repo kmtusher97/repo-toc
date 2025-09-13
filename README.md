@@ -251,8 +251,10 @@ jobs:
 To generate the TOC:
 
 ```javascript
-const dirPath = __dirname + "/mocks";
-const filePath = __dirname + "/" + "README.md";
+const path = require('path');
+
+const dirPath = path.join(__dirname, "mocks");
+const filePath = path.join(__dirname, "README.md");
 
 fs.writeFileSync(filePath, "## Table of contents");
 generateTableOfContent({ dirPath, filePath });
@@ -261,7 +263,7 @@ generateTableOfContent({ dirPath, filePath });
 // Note: .gitignore files are automatically respected
 generateTableOfContent({
   dirPath: __dirname,
-  filePath: "./README.md",
+  filePath: path.join(__dirname, "README.md"),
   excludedDirs: ["node_modules", "dist", "build"]
 });
 
@@ -283,7 +285,7 @@ Generates a Table of Contents for the specified directory.
   - **`extensions`** (array of strings): An array of file extensions to include in the TOC.  
     - Default: `[".md"]`.  
   - **`filePath`** (string): The path where the generated TOC will be written.  
-    - Default: `__dirname + "/README.md"`.
+    - Default: `path.join(__dirname, "README.md")`.
   - **`excludedDirs`** (array of strings): An array of directory names to exclude from the TOC.  
     - Default: `[]`. 
     - **Automatic exclusions**: Directories starting with `.` and files/directories listed in `.gitignore` files are automatically excluded, regardless of this parameter.
