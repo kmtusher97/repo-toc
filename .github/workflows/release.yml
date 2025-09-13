@@ -1,7 +1,10 @@
 name: Release and Publish to NPM
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
     branches:
       - main
 
@@ -9,8 +12,8 @@ jobs:
   release:
     runs-on: ubuntu-latest
     
-    # Only run if this is not a version bump commit (to avoid infinite loops)
-    if: "!contains(github.event.head_commit.message, 'chore: bump version')"
+    # Only run if CI workflow succeeded and this is not a version bump commit
+    if: "github.event.workflow_run.conclusion == 'success' && !contains(github.event.head_commit.message, 'chore: bump version')"
     
     permissions:
       contents: write
@@ -26,11 +29,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: "18"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
+
+      - name: Link repo-toc package
+        run: |
+          npm link
+          cd tests
+          npm link repo-toc
+          cd ..
 
       - name: Run tests
         run: npm test

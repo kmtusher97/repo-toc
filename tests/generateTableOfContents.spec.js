@@ -15,7 +15,6 @@ describe("generateTableOfContents", () => {
     generateTableOfContent({ dirPath, filePath });
 
     const fileContent = fs.readFileSync(filePath, "utf8");
-    console.log(fileContent);
     assertTocContent(fileContent);
 
     fs.unlink(filePath, (err) => {
