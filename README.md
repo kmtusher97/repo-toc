@@ -1,7 +1,7 @@
 # repo-toc
 
 [![npm version](https://badge.fury.io/js/repo-toc.svg)](https://badge.fury.io/js/repo-toc)  
-Easily generate a markdown Table of Contents (TOC) for your GitHub repository.
+Easily generate a markdown Table of Contents (TOC) for your GitHub repository. Automatically respects `.gitignore` files and excludes ignored files and directories from the TOC.
 
 ## Installation
 
@@ -55,12 +55,26 @@ Options:
   -x, --exclude  Directories to exclude (comma-separated)              [string]
   -h, --help     Show help                                             [boolean]
 
-Note: Files and directories in .gitignore are automatically excluded.
+**Important**: Files and directories listed in `.gitignore` files are automatically excluded from the TOC generation. This includes:
+- Files and directories specified in `.gitignore` at any level in your repository
+- Common ignored patterns like `node_modules/`, `dist/`, `build/`, `.git/`, etc.
+- You can still use the `--exclude` option to exclude additional directories beyond what's in `.gitignore`
 ```
 
 ```
 repo-toc
 ```
+
+### .gitignore Support
+
+`repo-toc` automatically respects `.gitignore` files throughout your repository:
+
+- **Automatic exclusion**: Files and directories listed in `.gitignore` are automatically excluded from TOC generation
+- **Multi-level support**: Respects `.gitignore` files at any directory level in your repository
+- **Common patterns**: Automatically excludes common ignored patterns like `node_modules/`, `dist/`, `build/`, `.git/`, etc.
+- **Additional exclusions**: You can still use the `--exclude` option to exclude additional directories beyond what's in `.gitignore`
+
+This ensures your TOC only includes files that are actually tracked in your repository, keeping it clean and relevant.
 
 ### Usage Examples
 
@@ -74,7 +88,7 @@ Generate TOC for only JavaScript files, excluding test directories:
 repo-toc --ext .js,.ts --exclude tests,__tests__,spec
 ```
 
-**Note**: The tool automatically respects `.gitignore` files and excludes any files or directories listed there, in addition to your manual exclusions.
+**Note**: The tool automatically respects `.gitignore` files and excludes any files or directories listed there, in addition to your manual exclusions. This ensures your TOC only includes files that are actually tracked in your repository.
 
 ### Use with Github actions
 It will auto generate the TOC after you commit things on Github. You use this github action
@@ -155,7 +169,9 @@ Generates a Table of Contents for the specified directory.
   - **`filePath`** (string): The path where the generated TOC will be written.  
     - Default: `__dirname + "/README.md"`.
   - **`excludedDirs`** (array of strings): An array of directory names to exclude from the TOC.  
-    - Default: `[]`. Note: Directories starting with `.` and files/directories in `.gitignore` are automatically excluded.
+    - Default: `[]`. 
+    - **Automatic exclusions**: Directories starting with `.` and files/directories listed in `.gitignore` files are automatically excluded, regardless of this parameter.
+    - This parameter allows you to exclude additional directories beyond what's already ignored by `.gitignore`.
 
 **Returns**:  
 `void`
