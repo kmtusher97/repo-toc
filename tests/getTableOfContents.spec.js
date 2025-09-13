@@ -1,9 +1,14 @@
+const path = require("path");
+
 const { getTableOfContents } = require("../lib");
-const { cleanupTestArtifacts, assertTocContent } = require("./helpers/testUtils");
+const {
+  cleanupTestArtifacts,
+  assertTocContent,
+} = require("./helpers/testUtils");
 
 describe("getFilesByExtension", () => {
   test("should return files with specified extensions", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "/mocks");
     const extensions = [".md"];
 
     cleanupTestArtifacts(dirPath);
@@ -13,7 +18,7 @@ describe("getFilesByExtension", () => {
   });
 
   test("should return all files no extensions", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "/mocks");
     const extensions = [];
 
     cleanupTestArtifacts(dirPath);
@@ -41,7 +46,7 @@ describe("getFilesByExtension", () => {
   });
 
   test("should include files with multiple matching extensions", () => {
-    const dirPath = __dirname + "/mocks";
+    const dirPath = path.join(__dirname, "/mocks");
     const extensions = [".md", ".txt"];
 
     const result = getTableOfContents({ dirPath, extensions });
