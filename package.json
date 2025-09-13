@@ -1,6 +1,6 @@
 {
   "name": "repo-toc",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "https://github.com/kmtusher97/repo-toc",
   "main": "index.js",
   "scripts": {
